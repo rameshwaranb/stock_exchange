@@ -12,13 +12,14 @@ exports.up = function(knex, Promise) {
         knex.schema.createTable('countries', function(table) {
             table.increments('id').unsigned().primary();
             table.string('name');
+            table.string('code');
         }),
 
         knex.schema.createTable('companies', function(table){
             table.increments('id').unsigned().primary();
             table.string('name');
             table.integer('budget').unsigned();
-            table.integer('base_bid').unsigned();
+            table.integer('bid').unsigned();
         }),
 
         knex.schema.createTable('company_countries', function(table) {
