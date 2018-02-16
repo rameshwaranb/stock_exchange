@@ -10,8 +10,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
-
+var companies = require('./routes/companies');
+var exchange = require('./routes/exchange');
 var app = express();
 
 // view engine setup
@@ -26,7 +26,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/v1/bids', bids);
+app.use('/api/v1/companies', companies);
+app.use('/api/v1/exchange', exchange);
 app.use('/', index);
 
 // catch 404 and forward to error handler

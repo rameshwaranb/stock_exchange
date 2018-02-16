@@ -18,7 +18,7 @@ exports.up = function(knex, Promise) {
         knex.schema.createTable('companies', function(table){
             table.increments('id').unsigned().primary();
             table.string('name');
-            table.integer('budget').unsigned();
+            table.decimal('budget', 10, 2).unsigned();
             table.integer('bid').unsigned();
         }),
 

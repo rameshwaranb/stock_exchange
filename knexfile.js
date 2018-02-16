@@ -12,7 +12,8 @@ module.exports = {
     },
     seeds: {
       directory: './seeds'
-    }
+    },
+    debug: true
   },
 
   test: {
@@ -27,6 +28,7 @@ module.exports = {
     },
     seeds: {
       directory: './seeds'
-    }
+    },
+    debug: true
   }
 }

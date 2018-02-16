@@ -2,6 +2,7 @@ var bookshelf = require('../db/bookshelf');
 var Company = require('./company');
 var CompanyCountry = require('./company_country');
 var Category = require('./category');
+var Country = require('./country');
 var CompanyCategory = require('./company_category');
 
 var Company = bookshelf.Model.extend({
