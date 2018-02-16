@@ -12,7 +12,8 @@ var Company = bookshelf.Model.extend({
   },
   categories: function() {
     return this.belongsToMany(Category).through(CompanyCategory);
-  }
+  },
+  hasTimestamps: false
 });
 
 module.exports = Company;
