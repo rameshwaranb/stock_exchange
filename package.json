@@ -19,6 +19,7 @@
     "mysql": "^2.15.0",
     "nodemon": "^1.14.12",
     "pug": "2.0.0-beta11",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "winston": "^3.0.0-rc1"
   }
 }
