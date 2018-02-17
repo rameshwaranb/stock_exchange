@@ -9,6 +9,9 @@ module.exports = {
 	    password: process.env.DB_PASS,
 	    database : process.env.DB_NAME,
 	    charset  : 'utf8'
+    },
+    seeds: {
+      directory: './seeds'
     }
   },
 
@@ -21,6 +24,9 @@ module.exports = {
       password: process.env.DB_PASS,
       database : process.env.TEST_DB_NAME,
       charset  : 'utf8'
+    },
+    seeds: {
+      directory: './seeds'
     }
   }
 }
