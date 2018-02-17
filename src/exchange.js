@@ -1,9 +1,7 @@
 const express = require('express');
-
 const Company = require('../models/company');
 const CompanyCountry = require('../models/company_country');
 const _ = require('lodash');
-
 const logger = require('../util/logger');
 
 var companyCountryCategoryJoin = function(qb){
@@ -25,7 +23,6 @@ var constructLog = function(caller, allCompany, currentFilter){
 
   logger.info(`${caller}: ${combinedLog.join(',')}`);
 }
-
 
 var baseTargetingCheck = async function(query, allCompany){
   let baseTargetingFilter = await Company.query((qb) => {
@@ -60,9 +57,9 @@ var shortListAndUpdate = async function(baseBid, baseBidFilter){
   let winner = _.maxBy(baseBidFilter, 'budget');
   logger.info(`Winner = ${winner.id}`);
 
-  let updated = await Company.update({ budget: (winner.budget - (baseBid / 100)) }, { id: winner.id })
+  let updated = await Company.update({ budget: (winner.budget - (baseBid / 100)) }, { id: winner.id });
 
-  return updated;
+  return updated.toJSON();
 }
 
 exports.stockExchangeHandler = async function(req, res, next) {
@@ -86,7 +83,7 @@ exports.stockExchangeHandler = async function(req, res, next) {
       return res.send({message: 'No Companies Passed from BaseBid check'});
     }
 
-    let winner = shortListAndUpdate(baseBid, baseBidFilter);
+    let winner = await shortListAndUpdate(baseBid, baseBidFilter);
 
     return res.send({winner: winner});
   }
