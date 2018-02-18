@@ -1,16 +1,15 @@
-var bookshelf = require('../db/bookshelf');
-var Company = require('./company');
-var CompanyCountry = require('./company_country');
-var Category = require('./category');
-var Country = require('./country');
-var CompanyCategory = require('./company_category');
+const bookshelf = require('../db/bookshelf');
+const CompanyCountry = require('./company_country');
+const Category = require('./category');
+const Country = require('./country');
+const CompanyCategory = require('./company_category');
 
-var Company = bookshelf.Model.extend({
+const Company = bookshelf.Model.extend({
   tableName: 'companies',
-  countries: function() {
+  countries() {
     return this.belongsToMany(Country).through(CompanyCountry);
   },
-  categories: function() {
+  categories() {
     return this.belongsToMany(Category).through(CompanyCategory);
   },
   hasTimestamps: false

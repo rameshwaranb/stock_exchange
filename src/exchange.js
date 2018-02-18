@@ -2,65 +2,67 @@ const Company = require('../models/company');
 const _ = require('lodash');
 const logger = require('../util/logger');
 
-
-let companyCountryCategoryJoin = function(qb){
-  return qb.join('company_categories', 'company_categories.company_id', 'companies.id')
-    .join('categories', 'company_categories.category_id', 'categories.id')
-    .join('company_countries', 'company_countries.company_id', 'companies.id')
-    .join('countries', 'company_countries.country_id', 'countries.id')
+function companyCountryCategoryJoin(qb) {
+  return qb.join('company_categories', 'company_categories.company_id', 'companies.id').
+    join('categories', 'company_categories.category_id', 'categories.id').
+    join('company_countries', 'company_countries.company_id', 'companies.id').
+    join('countries', 'company_countries.country_id', 'countries.id');
 }
 
-let constructLog = function(caller, allCompany, currentFilter){
-  let combinedLog = _.map(_.sortBy(_.keys(allCompany)), (key) => {
-    if(currentFilter[key]){
-      return `{${allCompany[key][0].name}, Passed}`
+//Common logger for Targeting, Budget, BasiBid Checks
+function constructLog(caller, companies, currentFilter) {
+  const combinedLog = _.map(_.sortBy(_.keys(companies)), (key) => {
+    if (currentFilter[key]) {
+      return `{${companies[key][0].name}, Passed}`;
     }
-    else{
-      return `{${allCompany[key][0].name}, Failed}`
-    }
+
+    return `{${companies[key][0].name}, Failed}`;
   });
 
   logger.info(`${caller}: ${combinedLog.join(',')}`);
 }
 
-let baseTargetingCheck = async function(query, allCompany){
-  let baseTargetingFilter = await Company.query((qb) => {
-    companyCountryCategoryJoin(qb).where({'categories.name': query.category, 'countries.code': query.country})
-    .select('companies.*').distinct();
+// Returns companies that match given country and category
+async function baseTargetingCheck(query, companies) {
+  const baseTargetingFilter = await Company.query((qb) => {
+    companyCountryCategoryJoin(qb).where({ 'categories.name': query.category, 'countries.code': query.country }).
+    select('companies.*').
+    distinct();
   }).get();
 
-  let baseTargeting = baseTargetingFilter.toJSON();
-  let baseTargetingGrouped = _.groupBy(baseTargeting, (record) => (record.id));
-  constructLog('BaseTargeting', allCompany, baseTargetingGrouped)
+  const baseTargeting = baseTargetingFilter.toJSON();
+  const baseTargetingGrouped = _.groupBy(baseTargeting, (record) => record.id);
+  constructLog('BaseTargeting', companies, baseTargetingGrouped);
 
   return baseTargeting;
 }
 
-let budgetCheck = function(baseBid, baseTargeting, allCompany){
-  let budgetFilter = baseTargeting.filter((record) => (record.budget > 0.0));
-  let budgetFilterGrouped = _.groupBy(budgetFilter, (record) => (record.id));
-  constructLog('BudgetCheck', allCompany, budgetFilterGrouped)
+// Returns companies that have budget greater than zero
+function budgetCheck(baseBid, baseTargeting, companies) {
+  const budgetFilter = baseTargeting.filter((record) => record.budget > 0.0);
+  const budgetFilterGrouped = _.groupBy(budgetFilter, (record) => record.id);
+  constructLog('BudgetCheck', companies, budgetFilterGrouped);
 
   return budgetFilter;
 }
 
-let baseBidCheck = function(baseBid, budgetFilter, allCompany){
-  let baseBidFilter = budgetFilter.filter((record) => (baseBid <= record.budget*100 && record.bid <= baseBid));
-  let baseBidFilterGrouped = _.groupBy(baseBidFilter, (record) => (record.id));
-  constructLog('BaseBid', allCompany, baseBidFilterGrouped)
+// Returns companies whose bids are less than base basid and remaining budget is greater than base bid
+function baseBidCheck(baseBid, budgetFilter, companies) {
+  const baseBidFilter = budgetFilter.filter((record) => baseBid <= record.budget * 100 && record.bid <= baseBid);
+  const baseBidFilterGrouped = _.groupBy(baseBidFilter, (record) => record.id);
+  constructLog('BaseBid', companies, baseBidFilterGrouped);
 
   return baseBidFilter;
 }
 
-let shortListAndUpdate = async function(baseBid, baseBidFilter){
-  let winner = _.maxBy(baseBidFilter, 'budget');
+//Chooses the company with higher budget as winner and updates the budget of the winner
+async function shortListAndUpdate(baseBid, baseBidFilter) {
+  const winner = _.maxBy(baseBidFilter, 'budget');
   logger.info(`Winner = ${winner.id}`);
-
-  let updated = await Company.update({ budget: (winner.budget - (baseBid / 100)) }, { id: winner.id });
+  const updatedBudget = winner.budget - baseBid / 100;
+  const updated = await Company.update({ budget: updatedBudget }, { id: winner.id });
 
   return updated.toJSON();
 }
 
-
 module.exports = { baseTargetingCheck, budgetCheck, baseBidCheck, shortListAndUpdate };
-

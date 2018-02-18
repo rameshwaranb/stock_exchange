@@ -5,7 +5,7 @@ var CompanyCategory = require('./company_category');
 
 var Category = bookshelf.Model.extend({
   tableName: 'categories',
-  companies: function() {
+  companies() {
     return this.belongsToMany(Company).through(CompanyCategory);
   }
 });

@@ -5,10 +5,10 @@ var Country = require('./country');
 
 var CompanyCountry = bookshelf.Model.extend({
   tableName: 'company_countries',
-  company: function() {
+  company() {
     return this.belongsTo(Company);
   },
-  country: function() {
+  country() {
     return this.belongsTo(Country);
   }
 });
