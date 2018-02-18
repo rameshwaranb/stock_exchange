@@ -1,40 +1,38 @@
-const logger = require('../util/logger');
 const Company = require('../models/company');
 const _ = require('lodash');
-const { baseTargetingCheck, budgetCheck, baseBidCheck, shortListAndUpdate} = require('../src/exchange');
+const { baseTargetingCheck, budgetCheck, baseBidCheck, shortListAndUpdate } = require('../src/exchange');
 
-let stockExchangeHandler = async function(req, res, next) {
-  try{
-    let {country, category, baseBid} = req.query;
-    if(!country || !category || !baseBid){
-      res.send({error: 'Missing user input!! Country, Category and Basebid are required fields'})
+async function stockExchangeHandler(req, res) {
+  try {
+    const { country, category, baseBid } = req.query;
+    if (!country || !category || !baseBid) {
+      res.send({ error: 'Missing user input!! Country, Category and Basebid are required fields' });
     }
 
-    let allCompanies = await Company.get();
-    let allCompany = _.groupBy(allCompanies.toJSON(), (company) => company.id);
+    const allCompanies = await Company.get();
+    const allCompany = _.groupBy(allCompanies.toJSON(), (company) => company.id);
 
-    let baseTargeting = await baseTargetingCheck({country, category}, allCompany);
-    if(!baseTargeting.length){
-      return res.send({message: 'No Companies Passed from Targeting'});
+    const baseTargeting = await baseTargetingCheck({ country, category }, allCompany);
+    if (!baseTargeting.length) {
+      return res.send({ message: 'No Companies Passed from Targeting' });
     }
 
-    let budgetFilter = budgetCheck(baseBid, baseTargeting, allCompany);
-    if(!budgetFilter.length){
-      return res.send({message: 'No Companies Passed from Budget'});
+    const budgetFilter = budgetCheck(baseBid, baseTargeting, allCompany);
+    if (!budgetFilter.length) {
+      return res.send({ message: 'No Companies Passed from Budget' });
     }
 
-    let baseBidFilter = baseBidCheck(baseBid, budgetFilter, allCompany)
-    if(!baseBidFilter.length){
-      return res.send({message: 'No Companies Passed from BaseBid check'});
+    const baseBidFilter = baseBidCheck(baseBid, budgetFilter, allCompany);
+    if (!baseBidFilter.length) {
+      return res.send({ message: 'No Companies Passed from BaseBid check' });
     }
 
-    let winner = await shortListAndUpdate(baseBid, baseBidFilter);
+    const winner = await shortListAndUpdate(baseBid, baseBidFilter);
 
-    return res.send({winner: winner});
+    return res.send({ winner });
+  } catch (err) {
+    return res.send({ error: err.message });
   }
-  catch(err){
-    return res.send({error: err.message})
-  }
-};
+}
 
-module.exports = { stockExchangeHandler }
+module.exports = { stockExchangeHandler };

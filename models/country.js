@@ -1,7 +1,9 @@
-var bookshelf = require('../db/bookshelf');
-var Country = bookshelf.Model.extend({
+const bookshelf = require('../db/bookshelf');
+const CompanyCountry = require('./company_country');
+const Company = require('./company');
+const Country = bookshelf.Model.extend({
   tableName: 'countries',
-  companies: function() {
+  companies() {
     return this.belongsToMany(Company).through(CompanyCountry);
   }
 });
