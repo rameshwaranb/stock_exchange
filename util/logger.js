@@ -12,7 +12,7 @@ const logger = createLogger({
     myFormat
   ),
   transports: [
-    new transports.Console({ level: 'info' }),
+    new transports.Console({ level: 'error' }),
     new transports.File({ filename: 'log/error.log', level: 'error' }),
     new transports.File({ filename: 'log/combined.log' })
   ]
