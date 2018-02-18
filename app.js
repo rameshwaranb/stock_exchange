@@ -1,6 +1,5 @@
 require('dotenv').config();
-process.env.NODE_ENV = process.env.NODE_ENV || 'development'
-console.log('Env:', process.env.NODE_ENV);
+require('./util/set_environment')();
 
 var express = require('express');
 var http = require('http');
