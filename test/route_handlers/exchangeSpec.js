@@ -50,7 +50,6 @@ describe('Route exchange', function() {
     }).
     end(function(err, res) {
       const obj = res.body;
-
       if (err) {
         done(err);
       }
@@ -73,7 +72,6 @@ describe('Route exchange', function() {
     }).
     end(function(err, res) {
       const obj = res.body;
-
       if (err) {
         done(err);
       }

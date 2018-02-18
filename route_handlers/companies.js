@@ -10,5 +10,4 @@ async function getAllCompanies(req, res) {
   res.send({ data: companies.toJSON({ omitPivot: true }) });
 }
 
-
 module.exports = { getAllCompanies };

@@ -2,7 +2,6 @@ const chai = require('chai');
 const { expect } = chai;
 const knex = require('../../db/knex');
 const _ = require('lodash');
-
 const exchange = require('../../src/exchange');
 
 describe('Base Targeting', function() {
@@ -82,7 +81,6 @@ describe('Base Targeting', function() {
 
     const country = 'fr';
     const category = 'it';
-
     const result = await exchange.baseTargetingCheck({ country, category }, all);
 
     expect(result).to.deep.equal([]);
@@ -97,12 +95,10 @@ describe('Check Budget', function() {
       { id: 2, name: 'C2', budget: 0, bid: 30 },
       { id: 3, name: 'C3', budget: 3, bid: 5 }
     ], (company) => company.id);
-
     const filtered = [
       { id: 2, name: 'C2', budget: 0, bid: 30 },
       { id: 3, name: 'C3', budget: 3, bid: 5 }
     ];
-
     const result = exchange.budgetCheck(10, filtered, all);
 
     expect(result).to.deep.equal([{ id: 3, name: 'C3', budget: 3, bid: 5 }]);
@@ -118,12 +114,10 @@ describe('Check BaseBid', function() {
       { id: 2, name: 'C2', budget: 2, bid: 30 },
       { id: 3, name: 'C3', budget: 3, bid: 5 }
     ], (company) => company.id);
-
     const filtered = [
       { id: 2, name: 'C2', budget: 2, bid: 30 },
       { id: 3, name: 'C3', budget: 3, bid: 5 }
     ];
-
     const result = exchange.baseBidCheck(10, filtered, all);
 
     expect(result).to.deep.equal([{ id: 3, name: 'C3', budget: 3, bid: 5 }]);
@@ -158,12 +152,10 @@ describe('Check BaseBid', function() {
       { id: 2, name: 'C2', budget: 2, bid: 30 },
       { id: 3, name: 'C3', budget: 3, bid: 5 }
     ], (company) => company.id);
-
     const filtered = [
       { id: 2, name: 'C2', budget: 0.2, bid: 30 },
       { id: 3, name: 'C3', budget: 3, bid: 5 }
     ];
-
     const result = exchange.baseBidCheck(30, filtered, all);
 
     expect(result).to.deep.equal([{ id: 3, name: 'C3', budget: 3, bid: 5 }]);
@@ -185,7 +177,6 @@ describe('ShortList and Update', function() {
       { id: 3, company_id: 2, category_id: 2 },
       { id: 4, company_id: 2, category_id: 3 }
     ];
-
     var company_countries = [
       { id: 1, company_id: 1, country_id: 1 },
       { id: 2, company_id: 1, country_id: 2 },
@@ -208,7 +199,6 @@ describe('ShortList and Update', function() {
       { id: 1, name: 'C1', budget: 1, bid: 10 },
       { id: 2, name: 'C2', budget: 2, bid: 30 }
     ];
-
     const result = await exchange.shortListAndUpdate(40, inputArr);
 
     expect(result).to.deep.equal({ id: 2, name: 'C2', budget: 1.6, bid: 30 });
