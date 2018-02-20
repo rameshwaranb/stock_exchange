@@ -124,6 +124,50 @@ describe('Route exchange', function() {
     });
   });
 
+  it('If we input records that are not in database - No Companies Passed from Targeting', function(done) {
+
+    chai.request(app).get('/api/v1/exchange').
+    query({
+      country: 'ca',
+      category: 'automobile',
+      baseBid: 4
+    }).
+    end(function(err, res) {
+      if (err) {
+        done(err);
+      }
+      const obj = res.body;
+
+      expect(res).to.have.status(200);
+      expect(obj).to.have.property('message');
+      expect(obj.message).to.equal('No Companies Passed from Targeting');
+      done();
+    });
+  });
+
+  it(
+  'If the query parameters does not have category or country or basBid, give a message to enter all details',
+  function(done) {
+
+    chai.request(app).get('/api/v1/exchange').
+    query({
+      country: 'fr',
+      baseBid: 4
+    }).
+    end(function(err, res) {
+      if (err) {
+        done(err);
+      }
+      const obj = res.body;
+
+      expect(res).to.have.status(200);
+      expect(obj).to.have.property('error');
+      expect(obj.error).to.equal('Missing user input!! Country, Category and Basebid are required fields');
+      done();
+    });
+  }
+);
+
 });
 
 

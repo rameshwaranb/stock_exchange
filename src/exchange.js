@@ -46,7 +46,7 @@ function budgetCheck(baseBid, baseTargeting, companies) {
   return budgetFilter;
 }
 
-// Returns companies whose bids are less than base basid and remaining budget is greater than base bid
+// Returns companies whose bids are less than base bid and the remaining budget is greater than base bid
 function baseBidCheck(baseBid, budgetFilter, companies) {
   const baseBidFilter = budgetFilter.filter((record) => baseBid <= record.budget * 100 && record.bid <= baseBid);
   const baseBidFilterGrouped = _.groupBy(baseBidFilter, (record) => record.id);
